@@ -144,9 +144,6 @@ async def record_meter_data(update: Update, context: ContextTypes.DEFAULT_TYPE) 
 
     save_data(METER_DATA_FILE, meter_data)
 
-    # Создание впечатления очистки экрана
-    await update.message.reply_text('\n' * 100)
-
     await update.message.reply_text(f'Данные по счетчикам воды успешно сохранены для квартиры {apartment_number} на {date}.')
 
     # Завершение сеанса работы с пользователем
