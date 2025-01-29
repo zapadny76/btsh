@@ -1,6 +1,6 @@
 import logging
 import qrcode
-from telegram import ForceReply, Update
+from telegram import ForceReply, Update, ReplyKeyboardRemove
 from telegram.ext import Application, CommandHandler, ContextTypes, MessageHandler, filters, ConversationHandler
 from datetime import datetime
 from utils import load_data, save_data
@@ -19,7 +19,7 @@ USERS_FILE = 'users.json'
 METER_DATA_FILE = 'meter_data.json'
 
 # Состояния разговора
-REGISTER, RECORD_METER_DATA = range(2)
+REGISTER, RECORD_METER_DATA, ENTER_COLD_WATER, ENTER_HOT_WATER = range(4)
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Отправьте сообщение при выполнении команды /start."""
@@ -50,7 +50,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         return RECORD_METER_DATA
     else:
         await update.message.reply_html(
-            rf"Hi {user.mention_html()}! Отправьте ваш номер квартиры для регистрации (от 129 до 255).",
+            rf"Hi {user.mention_html()}! Отправьте ваш номер квартиры для регистрации.",
             reply_markup=ForceReply(selective=True),
         )
         return REGISTER
@@ -147,7 +147,7 @@ async def record_meter_data(update: Update, context: ContextTypes.DEFAULT_TYPE) 
     await update.message.reply_text(f'Данные по счетчикам воды успешно сохранены для квартиры {apartment_number} на {date}.')
 
     # Завершение сеанса работы с пользователем
-    await update.message.reply_text('Спасибо за использование нашего бота!')
+    await update.message.reply_text('Спасибо за использование нашего бота!', reply_markup=ReplyKeyboardRemove())
     return ConversationHandler.END
 
 async def generate_qr_code(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
